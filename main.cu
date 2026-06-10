@@ -1,12 +1,18 @@
-#include <iostream>
-
 int main() {
-    std::cout << "CUDA Transformer starting..." << std::endl;
 
-    // fake input
-    float input[4] = {1, 2, 3, 4};
+    FILE* f = fopen("weights.bin", "rb");
 
-    std::cout << "Input loaded" << std::endl;
+// example: read embeddings
+fread(embedding, sizeof(float), 16 * 8, f);
 
-    return 0;
+// read positional encoding
+fread(positional, sizeof(float), 16 * 8, f);
+
+    load_weights();
+
+    Tensor input = create_input();
+
+    Tensor output = transformer_forward(input);
+
+    print(output);
 }
