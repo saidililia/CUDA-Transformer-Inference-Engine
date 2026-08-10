@@ -1,1 +1,38 @@
-weights.bin
+# Build directories
+build/
+cmake-build-*/
+out/
+
+# Compiled binaries
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Object files
+*.o
+*.obj
+
+# CUDA artifacts
+*.ptx
+*.cubin
+*.fatbin
+
+# IDE
+.vscode/
+.idea/
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+install_manifest.txt
+Makefile
+
+# Profiling
+*.nsys-rep
+*.ncu-rep
+
+# OS
+.DS_Store
+Thumbs.db
