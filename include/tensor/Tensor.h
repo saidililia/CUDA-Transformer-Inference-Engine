@@ -2,7 +2,7 @@
 
 #include "tensor/Shape.h"
 
-#include <cstddef>
+#include <cstddef> 
 #include <initializer_list>
 #include <vector>
 
@@ -12,16 +12,16 @@ class Tensor {
 public:
     Tensor() = default;
 
-    explicit Tensor(const Shape& shape);
+    explicit Tensor(const Shape& shape); // this constructor initializes a tensor with the given shape, allocating memory for the data based on the number of elements in the shape.
 
-    explicit Tensor(std::initializer_list<size_t> shape);
+    explicit Tensor(std::initializer_list<size_t> shape); //
 
-    Tensor(const Shape& shape, float value);
+    Tensor(const Shape& shape, float value); // this constructor initializes a tensor with the given shape and fills it with the specified value.
 
     float* data();
     const float* data() const;
 
-    size_t numel() const;
+    size_t numel() const; // 
 
     size_t ndim() const;
 
