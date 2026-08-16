@@ -1,3 +1,5 @@
+// this code is a test for the Tensor class defined in include/tensor/Tensor.h. It creates a tensor with shape {2, 3}, checks its properties, modifies its values, and verifies that the modifications are correct. If all assertions pass, it prints a success message.
+
 #include "tensor/Tensor.h"
 
 #include <cassert>

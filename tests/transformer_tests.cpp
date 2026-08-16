@@ -1,3 +1,5 @@
+// this transformer_tests.cpp file contains tests for the Transformer model defined in the include/transformer directory. It creates an instance of the Transformer with a specific configuration, performs a forward pass with sample token IDs, and checks the output dimensions and properties to ensure correctness. If all assertions pass, it prints a success message indicating that the transformer tests have passed. 
+
 #include "transformer/Transformer.h"
 
 #include <cassert>

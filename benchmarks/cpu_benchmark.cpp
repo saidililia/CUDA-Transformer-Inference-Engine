@@ -1,3 +1,5 @@
+// this code is a simple benchmark for measuring the performance of the CPU transformer model. It initializes a transformer model with a given configuration, creates an example input sequence of token IDs, performs multiple forward passes to measure the average latency and throughput, and then outputs the results.
+
 #include "transformer/Transformer.h"
 #include "utils/Timer.h"
 

@@ -1,3 +1,5 @@
+// this code is a simple example of how to use the CPU transformer model for inference. It initializes a transformer model with a given configuration, creates an example input sequence of token IDs, performs inference to obtain logits, and then selects the highest-logit token for the final position in the sequence. The code also measures and outputs the inference latency.
+
 #include "transformer/Transformer.h"
 #include "utils/Logger.h"
 #include "utils/Timer.h"

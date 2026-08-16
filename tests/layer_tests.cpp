@@ -1,3 +1,5 @@
+// this layer_tests.cpp file contains tests for the Linear, LayerNorm, and Softmax layers defined in the include/layers directory. It creates instances of these layers, performs forward passes with sample input tensors, and checks the output dimensions and properties to ensure correctness. If all assertions pass, it prints a success message indicating that the layer tests have passed.
+
 #include "layers/LayerNorm.h"
 #include "layers/Softmax.h"
 #include "layers/Linear.h"

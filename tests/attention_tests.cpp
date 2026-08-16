@@ -1,3 +1,5 @@
+// this attention_tests.cpp file contains tests for the Attention layer defined in the include/layers directory. It creates an instance of the Attention layer, performs a forward pass with a sample input tensor, and checks the output dimensions and properties to ensure correctness. If all assertions pass, it prints a success message indicating that the attention tests have passed.
+
 #include "layers/Attention.h"
 #include "transformer/TransformerConfig.h"
 
