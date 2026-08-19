@@ -1,3 +1,5 @@
+// represents a single block in the decoder part of a transformer model, which consists of a multi-head self-attention mechanism followed by a feedforward neural network, with layer normalization applied before each sub-layer to stabilize training and improve convergence.
+
 #pragma once
 
 #include "layers/Attention.h"

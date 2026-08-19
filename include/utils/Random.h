@@ -1,3 +1,5 @@
+// Random.h header file for the Random class in the transformer namespace, which provides methods for generating random numbers from normal and uniform distributions, useful for initializing weights and biases in neural networks.
+
 #pragma once
 
 #include <random>

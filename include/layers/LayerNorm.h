@@ -1,3 +1,5 @@
+// LayerNorm.h header file for the Layer Normalization layer in the transformer namespace, which normalizes the input across the features dimension to improve training stability and convergence.
+
 #pragma once
 
 #include "tensor/Tensor.h"

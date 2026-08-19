@@ -1,3 +1,5 @@
+// embedding.h header file for the Embedding layer in the transformer namespace, which maps discrete token IDs to continuous vector representations (Embedding vectors).
+
 #pragma once
 
 #include "tensor/Tensor.h"

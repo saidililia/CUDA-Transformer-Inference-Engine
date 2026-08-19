@@ -1,3 +1,5 @@
+// RoPE.h header file for the Rotary Positional Encoding (RoPE) layer in the transformer namespace, which applies rotary positional encoding to the query and key tensors to incorporate positional information into the attention mechanism.
+
 #pragma once
 
 #include "tensor/Tensor.h"

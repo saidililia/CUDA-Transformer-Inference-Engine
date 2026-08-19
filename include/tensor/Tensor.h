@@ -1,3 +1,4 @@
+// tensor header file 
 #pragma once
 
 #include "tensor/Shape.h"
@@ -12,16 +13,16 @@ class Tensor {
 public:
     Tensor() = default;
 
-    explicit Tensor(const Shape& shape); 
+    explicit Tensor(const Shape& shape); // constructor that takes a Shape object
 
-    explicit Tensor(std::initializer_list<size_t> shape); 
+    explicit Tensor(std::initializer_list<size_t> shape); // convinience constructor for initializer list
 
     Tensor(const Shape& shape, float value); 
 
     float* data();
     const float* data() const;
 
-    size_t numel() const; // 
+    size_t numel() const; 
 
     size_t ndim() const;
 

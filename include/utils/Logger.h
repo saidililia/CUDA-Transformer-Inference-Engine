@@ -1,3 +1,5 @@
+// Logger.h header file for the Logger class in the transformer namespace, which provides static methods for logging informational and error messages to facilitate debugging and monitoring of the transformer model's execution.
+
 #pragma once
 
 #include <string>

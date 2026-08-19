@@ -1,3 +1,5 @@
+// TransformerConfig.h header file for the TransformerConfig struct in the transformer namespace, which holds configuration parameters for a transformer model, including vocabulary size, hidden size, number of attention heads, number of layers, intermediate size, maximum sequence length, and layer normalization epsilon value.
+
 #pragma once
 
 #include <cstddef>

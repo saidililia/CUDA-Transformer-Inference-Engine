@@ -1,3 +1,4 @@
+// shape header file for tensor class
 #pragma once 
 
 #include <cstddef> 

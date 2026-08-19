@@ -1,3 +1,5 @@
+// Linear.h header file for the Linear layer in the transformer namespace, Y=XW+b 
+//instead of doing matrix multiplication, we can use the dot product to compute the output of the linear layer.
 #pragma once
 
 #include "tensor/Tensor.h"

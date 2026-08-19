@@ -1,3 +1,5 @@
+// Attention.h header file for the Attention layer in the transformer namespace, which implements the multi-head self-attention mechanism used in transformer models to capture dependencies between different positions in the input sequence.
+
 #pragma once
 
 #include "layers/Linear.h"
