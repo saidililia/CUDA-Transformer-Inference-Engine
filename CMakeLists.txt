@@ -11,9 +11,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-# --------------------------------------------------
+
 # Library
-# --------------------------------------------------
 
 add_library(transformer_core
 
@@ -40,9 +39,8 @@ target_include_directories(
         ${PROJECT_SOURCE_DIR}/include
 )
 
-# --------------------------------------------------
+
 # CPU inference executable
-# --------------------------------------------------
 
 add_executable(
     transformer_cpu
@@ -55,9 +53,8 @@ target_link_libraries(
         transformer_core
 )
 
-# --------------------------------------------------
+
 # Tests
-# --------------------------------------------------
 
 add_executable(
     tensor_tests
@@ -103,9 +100,8 @@ target_link_libraries(
         transformer_core
 )
 
-# --------------------------------------------------
+
 # Benchmark
-# --------------------------------------------------
 
 add_executable(
     cpu_benchmark
@@ -118,9 +114,8 @@ target_link_libraries(
         transformer_core
 )
 
-# --------------------------------------------------
+
 # Compiler warnings
-# --------------------------------------------------
 
 if (MSVC)
 
