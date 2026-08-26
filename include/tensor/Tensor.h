@@ -13,9 +13,9 @@ class Tensor {
 public:
     Tensor() = default;
 
-    explicit Tensor(const Shape& shape); // constructor that takes a Shape object
+    explicit Tensor(const Shape& shape); 
 
-    explicit Tensor(std::initializer_list<size_t> shape); // convinience constructor for initializer list
+    explicit Tensor(std::initializer_list<size_t> shape); 
 
     Tensor(const Shape& shape, float value); 
 
@@ -43,4 +43,4 @@ private:
     std::vector<float> data_;
 };
 
-} // namespace transformer
+} 

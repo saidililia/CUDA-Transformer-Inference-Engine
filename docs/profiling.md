@@ -1,26 +1,27 @@
-
-```markdown
 # Profiling
 
-This document describes the profiling methodology for the CUDA Transformer Inference Engine.
-
-Profiling is treated as an engineering activity used to identify bottlenecks and validate optimization hypotheses.
+This document will record profiling results and performance observations from the CPU and CUDA implementations.
 
 ---
 
-## 1. Profiling Philosophy
+## Current Status
 
-The project follows:
+Profiling has not started yet.
 
-```text
-Measure
-   ↓
-Identify bottleneck
-   ↓
-Understand bottleneck
-   ↓
-Form optimization hypothesis
-   ↓
-Implement
-   ↓
-Measure again
+The current project milestone is the completed CPU reference implementation, including correctness tests and a baseline benchmark.
+
+Profiling will begin during the CUDA implementation phase to identify performance bottlenecks and guide kernel optimization.
+
+---
+
+## Planned Profiling Areas
+
+The profiling work will focus on:
+
+- Execution time
+- Kernel performance
+- Memory access behavior
+- GPU utilization
+- CPU vs. CUDA performance
+
+Results will be added as profiling experiments are performed.

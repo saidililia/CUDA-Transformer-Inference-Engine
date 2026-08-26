@@ -2,9 +2,7 @@
 ```markdown
 # Roadmap
 
-This document defines the development roadmap for the CUDA Transformer Inference Engine.
-
-The project is developed incrementally, with correctness and measurement established before optimization.
+This roadmap tracks the development of the CUDA Transformer Inference Engine from the CPU reference implementation to a profiled and optimized CUDA implementation.
 
 ---
 
@@ -12,152 +10,95 @@ The project is developed incrementally, with correctness and measurement establi
 
 **Status: Complete**
 
-The first milestone is a complete CPU implementation of a small decoder-only Transformer.
-
-## Objectives
-
-- Establish the Transformer computational graph.
-- Implement core operations.
-- Create a deterministic reference implementation.
-- Build a testable C++ project.
-- Establish an initial performance baseline.
+Establish a complete and testable CPU implementation of a small decoder-only Transformer.
 
 ## Completed
 
-- [x] Project structure
-- [x] CMake build system
-- [x] Tensor abstraction
-- [x] Shape abstraction
-- [x] Random initialization
-- [x] Token embedding
-- [x] Linear layers
-- [x] LayerNorm
-- [x] Softmax
-- [x] RoPE
-- [x] Multi-head causal self-attention
-- [x] GELU
-- [x] Feed-forward network
-- [x] Residual connections
-- [x] Decoder block
-- [x] Two-layer Transformer
-- [x] Final LayerNorm
-- [x] Language-model head
-- [x] CPU inference executable
-- [x] Unit tests
-- [x] Integration tests
-- [x] CPU benchmark
+- [x] Implement tensor abstraction and basic tensor operations
+- [x] Implement linear layers and token embeddings
+- [x] Implement LayerNorm, Softmax, RoPE, and GELU
+- [x] Implement multi-head self-attention
+- [x] Implement feed-forward network
+- [x] Implement decoder block and 2-layer Transformer
+- [x] Implement CPU inference pipeline
+- [x] Add tensor, layer, attention, and Transformer tests
+- [x] Verify tensor shapes and end-to-end inference
+- [x] Establish CPU benchmark and baseline
+
+
+## Current baseline
+
+Layers: 2
+Hidden size: 256
+Attention heads: 4
+Sequence length: 32
+Iterations: 10
+Average latency: 193.785 ms
+Throughput: 165.132 tokens/s
 
 ---
 
-# Phase 2 — CPU Validation and Profiling
-
-**Status: In progress**
-
-The objective is to understand the computational characteristics of the CPU reference implementation before writing CUDA kernels.
-
-## Objectives
-
-- Validate numerical behavior more thoroughly.
-- Measure individual operations.
-- Identify computational bottlenecks.
-- Understand scaling with sequence length.
-- Establish operation-level performance baselines.
-
-## Tasks
-
-- [ ] Add operation-level timers.
-- [ ] Measure embedding time.
-- [ ] Measure LayerNorm time.
-- [ ] Measure Q/K/V projection time.
-- [ ] Measure RoPE time.
-- [ ] Measure QKᵀ time.
-- [ ] Measure Softmax time.
-- [ ] Measure attention × V time.
-- [ ] Measure output projection time.
-- [ ] Measure FFN time.
-- [ ] Measure final LayerNorm.
-- [ ] Measure LM head.
-- [ ] Analyze sequence-length scaling.
-- [ ] Record profiling results in `docs/profiling.md`.
-- [ ] Update `docs/benchmark.md`.
-
----
-
-# Phase 3 — CUDA Infrastructure
+# Phase 2 — CPU Profiling
 
 **Status: Planned**
 
-Before implementing Transformer kernels, establish the basic CUDA runtime infrastructure.
+Profile the CPU reference implementation to identify compute-intensive operations and establish operation-level baselines before CUDA implementation.
 
-## Objectives
-
-- Introduce CUDA compilation through CMake.
-- Establish device memory management.
-- Create basic CUDA error handling.
-- Create CUDA tensor/device representations.
-- Establish CPU-to-GPU and GPU-to-CPU transfers.
 
 ## Tasks
 
-- [ ] Enable CUDA language in CMake.
-- [ ] Add `.cu` source files.
-- [ ] Create CUDA utility infrastructure.
-- [ ] Implement CUDA error checking.
-- [ ] Implement device memory allocation.
-- [ ] Implement host/device transfers.
-- [ ] Implement CUDA tensor representation.
-- [ ] Create basic CUDA kernel test.
-- [ ] Validate GPU execution independently.
+- [ ] Add operation-level timing
+- [ ] Measure embedding, LayerNorm, Q/K/V projections, and RoPE
+- [ ] Measure QKᵀ, Softmax, and attention × V
+- [ ] Measure output projection and FFN
+- [ ] Measure final LayerNorm and LM head
+- [ ] Analyze performance across sequence lengths
+- [ ] Record profiling results in `docs/profiling.md`
+- [ ] Update `docs/benchmark.md`
 
 ---
 
-# Phase 4 — First CUDA Kernels
+# Phase 3 — CUDA Implementation
 
 **Status: Planned**
 
-The first CUDA kernels should be simple and highly parallel.
-
-## Candidate operations
-
-- [ ] Element-wise operations
-- [ ] Residual addition
-- [ ] GELU
-- [ ] RoPE
-
-The purpose of this phase is to become comfortable with:
-
-- thread indexing
-- grid/block configuration
-- device memory
-- kernel launches
-- synchronization
-- CUDA error handling
-
----
-
-# Phase 5 — CUDA Linear Algebra
-
-**Status: Planned**
-
-Matrix multiplication is expected to be one of the most important GPU workloads.
+Introduce CUDA execution and progressively move compute-intensive Transformer operations to the GPU.
 
 ## Tasks
 
-- [ ] Implement baseline CUDA matrix multiplication.
-- [ ] Validate against CPU implementation.
-- [ ] Benchmark baseline kernel.
-- [ ] Analyze memory access.
-- [ ] Introduce tiled matrix multiplication.
-- [ ] Investigate shared memory.
-- [ ] Tune block dimensions.
-- [ ] Analyze register usage.
-- [ ] Compare kernel variants.
+- [ ] Enable CUDA compilation through CMake
+- [ ] Implement CUDA error handling and device memory management
+- [ ] Implement host/device data transfers
+- [ ] Implement CUDA tensor/device representations
+- [ ] Implement and test basic CUDA kernels
+- [ ] Implement CUDA element-wise, residual, GELU, and RoPE operations
+- [ ] Implement CUDA matrix multiplication
+- [ ] Implement CUDA attention operations
+- [ ] Implement CUDA feed-forward operations
+- [ ] Integrate CUDA kernels into the inference pipeline
+- [ ] Validate CUDA outputs against the CPU reference
 
-## Validation
+---
 
-Every implementation should satisfy:
+# Phase 4 — GPU Profiling & Optimization
 
-```text
-CPU output
-    ≈
-CUDA output
+**Status: Planned**
+
+Profile the CUDA implementation, identify bottlenecks, and optimize kernels based on measured performance.
+
+## Tasks
+
+- [ ] Establish CUDA performance baseline
+- [ ] Measure kernel execution time and end-to-end latency
+- [ ] Measure throughput
+- [ ] Analyze memory access behavior
+- [ ] Profile GPU execution
+- [ ] Identify performance bottlenecks
+- [ ] Optimize thread and block configurations
+- [ ] Optimize memory access patterns
+- [ ] Investigate shared memory and register usage
+- [ ] Reduce unnecessary memory transfers
+- [ ] Re-profile after each optimization
+- [ ] Compare CPU, baseline CUDA, and optimized CUDA performance
+- [ ] Document profiling results and optimization decisions
+

@@ -2,24 +2,20 @@
 ```markdown
 # Benchmark
 
-This document defines the benchmarking methodology for the CUDA Transformer Inference Engine.
-
-The purpose of benchmarking is not simply to produce a single latency number. The goal is to establish reproducible baselines and measure the performance impact of individual implementation and optimization decisions.
+This document describes how performance is measured in the CUDA Transformer Inference Engine, from the CPU reference implementation to the CUDA implementation.
 
 ---
 
-## 1. Benchmarking Principles
+## 1. Benchmarking Steps
 
-The project follows these principles:
-
-1. Establish a CPU reference baseline first.
-2. Separate correctness validation from performance measurement.
-3. Warm up the implementation before timing steady-state execution.
-4. Use multiple iterations.
-5. Report average execution time.
-6. Keep model configuration fixed when comparing implementations.
-7. Compare equivalent workloads.
-8. Record the implementation and hardware configuration used for measurements.
+1. Establish a CPU reference baseline for correctness and performance.
+2. Identify compute-intensive operations in the transformer inference pipeline.
+3. Implement CUDA kernels by mapping parallel workloads to GPU threads.
+4. Measure kernel execution time and overall inference latency.
+5. Analyze memory access patterns and GPU execution behavior.
+6. Evaluate kernel performance and identify bottlenecks.
+7. Optimize kernels based on profiling results.
+8. Compare CUDA performance against the CPU baseline using equivalent workloads.
 
 ---
 

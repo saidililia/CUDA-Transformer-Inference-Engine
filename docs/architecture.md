@@ -1,40 +1,14 @@
 # CUDA Transformer Inference Engine
 
-A lightweight C++ inference engine for a 2-layer decoder-only Transformer, developed as a systems-oriented project to study Transformer inference, CUDA kernel design, GPU parallelism, memory behavior, and hardware-aware optimization.
+A lightweight C++ inference engine implementing a 2-layer decoder-only Transformer. The project uses a CPU reference implementation to establish correctness and performance baselines before implementing CUDA kernels for compute-intensive operations.
 
-The project follows a **reference-first engineering methodology**: a complete CPU implementation is established and validated before progressively mapping compute-intensive operations to an NVIDIA GPU.
-
-> **Current status:** CPU reference implementation complete, tested, and benchmarked. CUDA implementation and GPU optimization are the next development phase.
-
----
-
-## Overview
-
-Transformer inference consists of a collection of computational primitives that are well suited to parallel execution, including matrix multiplication, attention, normalization, and element-wise operations.
-
-Rather than relying on a high-level inference framework, this project implements the core Transformer inference pipeline from the ground up in C++.
-
-The primary objectives are to develop practical understanding of:
-
-- Transformer inference internals
-- C++ systems programming
-- tensor representations and memory layout
-- CPU reference implementations
-- CUDA programming
-- GPU thread/block mapping
-- memory access patterns
-- parallel reductions
-- GPU memory hierarchy
-- numerical correctness
-- performance profiling
-- kernel-level optimization
-- end-to-end inference performance
+> **Current status:** CPU reference implementation complete, tested, and benchmarked. CUDA kernel implementation and GPU profiling are in progress.
 
 ---
 
 ## Current Model
 
-The current reference implementation uses a small decoder-only Transformer:
+The reference implementation uses the following configuration:
 
 | Parameter | Value |
 |---|---:|
@@ -56,7 +30,7 @@ The current reference implementation uses a small decoder-only Transformer:
 
 ## Architecture
 
-The current inference pipeline is:
+The inference pipeline is:
 
 ```text
 Token IDs
@@ -91,4 +65,7 @@ Final LayerNorm
 Language Model Head
     │
     ▼
-Logits
+Output Logits
+    │
+    ▼
+Predicted Token
