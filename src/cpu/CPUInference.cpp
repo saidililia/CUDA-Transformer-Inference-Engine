@@ -14,7 +14,7 @@ int main() {
     TransformerConfig config;
 
     config.vocabulary_size = 10000;
-    config.hidden_size = 256;
+    config.hidden_size = 256; // embedding dimension
     config.num_heads = 4;
     config.num_layers = 2;
     config.intermediate_size = 1024;

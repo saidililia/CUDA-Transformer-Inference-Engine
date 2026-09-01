@@ -33,14 +33,11 @@ Tensor DecoderBlock::forward(
      * x = x + Attention(LN(x))
      */
 
-    Tensor normalized =
-        attention_norm_.forward(input);
+    Tensor normalized = attention_norm_.forward(input); // apply layer normalization to the input tensor before passing it to the attention mechanism
 
-    Tensor attention_output =
-        attention_.forward(normalized);
+    Tensor attention_output = attention_.forward(normalized);
 
-    Tensor residual_1 =
-        input;
+    Tensor residual_1 = input;
 
     for (size_t i = 0;
          i < residual_1.numel();

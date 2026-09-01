@@ -1,4 +1,5 @@
 #include "transformer/Transformer.h"
+#include <string>
 
 namespace transformer {
 
@@ -26,52 +27,85 @@ Transformer::Transformer(
          i < config.num_layers;
          ++i) {
 
-        layers_.emplace_back(config);
+        layers_.emplace_back(config); // create a new DecoderBlock with the given configuration and add it to the layers_ vector
     }
 }
 
 Tensor Transformer::forward(
-    const Tensor& token_ids
+    const Tensor& token_ids,
+    Profiler* profiler
 ) const {
 
     /*
-     * Token IDs
-     *     ↓
      * Embedding
      */
 
+    if (profiler) {
+        profiler->start("Embedding");
+    }
+
     Tensor x =
         embedding_.forward(token_ids);
+
+    if (profiler) {
+        profiler->stop("Embedding");
+    }
+
 
     /*
      * Transformer blocks
      */
 
-    for (const auto& layer : layers_) {
+    for (size_t i = 0;
+         i < layers_.size();
+         ++i) {
 
-        x =
-            layer.forward(x);
+        const std::string name =
+            "DecoderBlock " +
+            std::to_string(i);
+
+        if (profiler) {
+            profiler->start(name);
+        }
+
+        x = layers_[i].forward(x);
+
+        if (profiler) {
+            profiler->stop(name);
+        }
     }
+
 
     /*
      * Final LayerNorm
      */
 
+    if (profiler) {
+        profiler->start("Final LayerNorm");
+    }
+
     x =
         final_norm_.forward(x);
 
+    if (profiler) {
+        profiler->stop("Final LayerNorm");
+    }
+
+
     /*
      * Language-model head
-     *
-     * [sequence, hidden]
-     *
-     * →
-     *
-     * [sequence, vocabulary]
      */
+
+    if (profiler) {
+        profiler->start("LM Head");
+    }
 
     Tensor logits =
         lm_head_.forward(x);
+
+    if (profiler) {
+        profiler->stop("LM Head");
+    }
 
     return logits;
 }

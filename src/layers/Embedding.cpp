@@ -19,7 +19,7 @@ Embedding::Embedding(
 
     for (size_t i = 0; i < weights_.numel(); ++i) {
         weights_[i] = random.normal(0.0f, 0.02f);
-    }
+    } // randomly initialize the embedding matrix with values drawn from a normal distribution with mean 0 and standard deviation 0.02
 }
 
 Tensor Embedding::forward(const Tensor& token_ids) const {
@@ -35,7 +35,7 @@ Tensor Embedding::forward(const Tensor& token_ids) const {
     Tensor output({
         sequence_length,
         embedding_dimension_
-    });
+    }); // embedding output tensor must be 2D: [sequence_length, embedding_hidden_size], example: [8, 256], 8 is the number of tokens in the input sequence, 256 is the embedding dimension
 
     for (size_t position = 0; position < sequence_length; ++position) {
 

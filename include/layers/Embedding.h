@@ -20,7 +20,7 @@ private:
     size_t vocabulary_size_;
     size_t embedding_dimension_;
 
-    Tensor weights_;
+    Tensor weights_; // embedding matrix of shape [vocabulary_size, embedding_dimension], where each row corresponds to the embedding vector for a specific token ID
 };
 
 } // namespace transformer

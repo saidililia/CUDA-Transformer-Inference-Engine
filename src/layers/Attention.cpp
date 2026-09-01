@@ -51,7 +51,7 @@ Tensor Attention::forward(
     const size_t sequence_length =
         input.dim(0);
 
-    Tensor q = query_projection_.forward(input);
+    Tensor q = query_projection_.forward(input); 
     Tensor k = key_projection_.forward(input);
     Tensor v = value_projection_.forward(input);
 

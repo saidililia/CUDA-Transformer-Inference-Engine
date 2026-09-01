@@ -7,31 +7,33 @@
 #include "tensor/Tensor.h"
 #include "transformer/DecoderBlock.h"
 #include "transformer/TransformerConfig.h"
+#include "utils/Profiler.h"
 
 #include <vector>
 
-namespace transformer {
+namespace transformer
+{
 
-class Transformer {
-public:
-    explicit Transformer(
-        const TransformerConfig& config
-    );
+    class Transformer
+    {
+    public:
+        explicit Transformer(
+            const TransformerConfig &config);
 
-    Tensor forward(
-        const Tensor& token_ids
-    ) const;
+        Tensor forward(
+            const Tensor &token_ids,
+            Profiler *profiler = nullptr) const;
 
-private:
-    TransformerConfig config_;
+    private:
+        TransformerConfig config_;
 
-    Embedding embedding_;
+        Embedding embedding_;
 
-    std::vector<DecoderBlock> layers_;
+        std::vector<DecoderBlock> layers_;
 
-    LayerNorm final_norm_;
+        LayerNorm final_norm_;
 
-    Linear lm_head_;
-};
+        Linear lm_head_;
+    };
 
 } // namespace transformer

@@ -43,6 +43,7 @@ Tensor Linear::forward(const Tensor& input) const {
 
     Tensor output({rows, output_features_});
 
+    // Perform matrix multiplication: output = input * weight^T + bias
     for (size_t i = 0; i < rows; ++i) {
 
         for (size_t j = 0; j < output_features_; ++j) {

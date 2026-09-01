@@ -31,6 +31,7 @@ add_library(transformer_core
 
     src/utils/Timer.cpp
     src/utils/Logger.cpp
+    src/utils/Profiler.cpp
 )
 
 target_include_directories(

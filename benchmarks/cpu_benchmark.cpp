@@ -2,12 +2,13 @@
 
 #include "transformer/Transformer.h"
 #include "utils/Timer.h"
-
+#include "utils/Profiler.h"
 #include <iostream>
 
 using namespace transformer;
 
-int main() {
+int main()
+{
 
     TransformerConfig config;
 
@@ -22,18 +23,16 @@ int main() {
 
     const size_t sequence_length = 32;
 
-    Tensor token_ids({
-        sequence_length
-    });
+    Tensor token_ids({sequence_length});
 
     for (size_t i = 0;
          i < sequence_length;
-         ++i) {
+         ++i)
+    {
 
         token_ids[i] =
             static_cast<float>(
-                i % config.vocabulary_size
-            );
+                i % config.vocabulary_size);
     }
 
     /*
@@ -42,12 +41,15 @@ int main() {
 
     for (int i = 0;
          i < 3;
-         ++i) {
+         ++i)
+    {
 
         model.forward(token_ids);
     }
 
     constexpr int iterations = 10;
+
+    Profiler profiler;
 
     Timer timer;
 
@@ -55,9 +57,12 @@ int main() {
 
     for (int i = 0;
          i < iterations;
-         ++i) {
+         ++i)
+    {
 
-        model.forward(token_ids);
+        model.forward(
+            token_ids,
+            &profiler);
     }
 
     const double total_time =
@@ -103,12 +108,12 @@ int main() {
 
     std::cout
         << "Throughput: "
-        << (
-            1000.0 *
+        << (1000.0 *
             sequence_length /
-            average_time
-        )
+            average_time)
         << " tokens/s\n";
 
+    profiler.printReport();
+    
     return 0;
 }
