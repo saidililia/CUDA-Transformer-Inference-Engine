@@ -37,7 +37,7 @@ Tensor DecoderBlock::forward(
 
     Tensor attention_output = attention_.forward(normalized);
 
-    Tensor residual_1 = input;
+    Tensor residual_1 = input; // create a copy of the input tensor to use as a residual connection
 
     for (size_t i = 0;
          i < residual_1.numel();
@@ -54,12 +54,12 @@ Tensor DecoderBlock::forward(
     normalized =
         feed_forward_norm_.forward(
             residual_1
-        );
+        ); // apply layer normalization to the output of the attention mechanism before passing it to the feedforward network
 
     Tensor feed_forward_output =
         feed_forward_.forward(
             normalized
-        );
+        ); // pass the normalized tensor through the feedforward network, which consists of two linear transformations with a non-linear activation function in between
 
     Tensor output =
         residual_1;

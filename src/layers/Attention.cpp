@@ -51,6 +51,8 @@ Tensor Attention::forward(
     const size_t sequence_length =
         input.dim(0);
 
+
+    // Project input into attention weights: query, key, and value.
     Tensor q = query_projection_.forward(input); 
     Tensor k = key_projection_.forward(input);
     Tensor v = value_projection_.forward(input);
@@ -83,6 +85,11 @@ Tensor Attention::forward(
         head_dimension_
     });
 
+
+    // q_heads, k_heads, v_heads tensors are filled according to the rules of multi-head attention, where each head attends to a different part of the input sequence 
+    // the output of this loop is used to apply RoPE and compute attention scores
+    
+    // this loop is a bit ugly, must be refactored to be more readable, but it is correct and efficient
     for (size_t position = 0;
          position < sequence_length;
          ++position) {
@@ -119,32 +126,30 @@ Tensor Attention::forward(
         }
     }
 
+    // Apply RoPE to the query and key heads
     rope_.apply(
         q_heads,
         k_heads,
         sequence_length
     );
 
+
     Tensor attention_output({
         sequence_length,
         hidden_size_
     });
 
+    // the scale factor is used to normalize the dot product of the query and key vectors.
     const float scale =
         1.0f /
         std::sqrt(
             static_cast<float>(head_dimension_)
         );
 
+    // this loop computes the attention scores for each head and position, applies causal masking to prevent attending to future positions. Q*K^T is computed for each head.
     for (size_t head = 0;
          head < num_heads_;
          ++head) {
-
-        /*
-         * Attention scores:
-         *
-         * [sequence, sequence]
-         */
 
         Tensor scores({
             sequence_length,
@@ -211,13 +216,13 @@ Tensor Attention::forward(
             }
         }
 
+
+        // softmax function is applied to the attention scores to convert them into probabilities.
         Tensor probabilities =
             softmax(scores);
 
-        /*
-         * probabilities × V
-         */
 
+        // probabilities are used to compute a weighted sum of the value vectors, producing the final output of the attention mechanism for each head.    
         for (size_t i = 0;
              i < sequence_length;
              ++i) {
@@ -261,9 +266,10 @@ Tensor Attention::forward(
         }
     }
 
+    // projecting the concatenated heads onto Wo to produce the final output of the attention mechanism, which allows the model to combine information from different heads and produce a single output tensor that can be passed to the next layer in the transformer architecture.
     return output_projection_.forward(
         attention_output
     );
 }
 
-} // namespace transformer
+} 

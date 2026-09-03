@@ -1,5 +1,5 @@
-#include "layers/RoPE.h"
 
+#include "layers/RoPE.h"
 #include <cmath>
 #include <stdexcept>
 
@@ -36,6 +36,7 @@ void RoPE::apply(
         );
     }
 
+    // this loop transforms the query and key tensors in place, applying the RoPE transformation to each head and position
     for (size_t head = 0; head < num_heads; ++head) {
 
         for (size_t position = 0;

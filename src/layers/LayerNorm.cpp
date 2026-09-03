@@ -1,4 +1,3 @@
-// LayerNorm.cpp that performs layer normalization on a 2D tensor. The input tensor is expected to have shape [rows, dimension], where 'rows' is the number of samples and 'dimension' is the number of features. The layer normalization is applied across the 'dimension' axis for each row independently.
 #include "layers/LayerNorm.h"
 #include <cmath>
 #include <stdexcept>

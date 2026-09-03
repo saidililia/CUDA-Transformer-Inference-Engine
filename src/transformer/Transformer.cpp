@@ -101,7 +101,7 @@ Tensor Transformer::forward(
     }
 
     Tensor logits =
-        lm_head_.forward(x);
+        lm_head_.forward(x); // project the output of the final layer normalization to the vocabulary size using a linear layer to produce logits for each token in the sequence
 
     if (profiler) {
         profiler->stop("LM Head");
