@@ -1,15 +1,13 @@
-// this code is a simple benchmark for measuring the performance of the CPU transformer model. It initializes a transformer model with a given configuration, creates an example input sequence of token IDs, performs multiple forward passes to measure the average latency and throughput, and then outputs the results.
-
 #include "transformer/Transformer.h"
 #include "utils/Timer.h"
 #include "utils/Profiler.h"
+
 #include <iostream>
 
 using namespace transformer;
 
 int main()
 {
-
     TransformerConfig config;
 
     config.vocabulary_size = 10000;
@@ -29,51 +27,92 @@ int main()
          i < sequence_length;
          ++i)
     {
-
         token_ids[i] =
             static_cast<float>(
                 i % config.vocabulary_size);
     }
 
+    constexpr int iterations = 10;
+
     /*
-     * Warm-up.
+     * ============================================================
+     * Warm-up
+     * ============================================================
+     *
+     * Run both paths before measuring them.
      */
 
     for (int i = 0;
          i < 3;
          ++i)
     {
-
         model.forward(token_ids);
+        model.forwardNextToken(token_ids);
     }
 
-    constexpr int iterations = 10;
+    Profiler full_profiler;
+    Profiler next_token_profiler;
 
-    Profiler profiler;
+    /*
+     * ============================================================
+     * Benchmark: model.forward()
+     * ============================================================
+     */
 
-    Timer timer;
+    Timer full_timer;
 
-    timer.start();
+    full_timer.start();
 
     for (int i = 0;
          i < iterations;
          ++i)
     {
-
         model.forward(
             token_ids,
-            &profiler);
+            &full_profiler);
     }
 
-    const double total_time =
-        timer.stopMilliseconds();
+    const double full_total_time =
+        full_timer.stopMilliseconds();
 
-    const double average_time =
-        total_time /
+    const double full_average_time =
+        full_total_time /
         static_cast<double>(iterations);
 
+    /*
+     * ============================================================
+     * Benchmark: model.forwardNextToken()
+     * ============================================================
+     */
+
+    Timer next_token_timer;
+
+    next_token_timer.start();
+
+    for (int i = 0;
+         i < iterations;
+         ++i)
+    {
+        model.forwardNextToken(
+            token_ids,
+            &next_token_profiler);
+    }
+
+    const double next_token_total_time =
+        next_token_timer.stopMilliseconds();
+
+    const double next_token_average_time =
+        next_token_total_time /
+        static_cast<double>(iterations);
+
+    /*
+     * ============================================================
+     * Results
+     * ============================================================
+     */
+
     std::cout
-        << "CPU Transformer Benchmark\n"
+        << "\nCPU Transformer Benchmark\n"
         << "==========================\n";
 
     std::cout
@@ -101,19 +140,97 @@ int main()
         << iterations
         << '\n';
 
+    /*
+     * Full forward results.
+     */
+
+    std::cout
+        << "\n--- model.forward() ---\n";
+
+    std::cout
+        << "Output shape: ["
+        << sequence_length
+        << ", "
+        << config.vocabulary_size
+        << "]\n";
+
     std::cout
         << "Average latency: "
-        << average_time
+        << full_average_time
         << " ms\n";
 
     std::cout
         << "Throughput: "
         << (1000.0 *
             sequence_length /
-            average_time)
+            full_average_time)
         << " tokens/s\n";
 
-    profiler.printReport();
-    
+    /*
+     * Next-token results.
+     */
+
+    std::cout
+        << "\n--- model.forwardNextToken() ---\n";
+
+    std::cout
+        << "Output shape: [1, "
+        << config.vocabulary_size
+        << "]\n";
+
+    std::cout
+        << "Average latency: "
+        << next_token_average_time
+        << " ms\n";
+
+    /*
+     * Only one token is actually projected by
+     * forwardNextToken().
+     */
+
+    std::cout
+        << "Throughput: "
+        << (1000.0 /
+            next_token_average_time)
+        << " tokens/s\n";
+
+    /*
+     * ============================================================
+     * Comparison
+     * ============================================================
+     */
+
+    const double speedup =
+        full_average_time /
+        next_token_average_time;
+
+    std::cout
+        << "\n--- Comparison ---\n";
+
+    std::cout
+        << "Speedup: "
+        << speedup
+        << "x\n";
+
+    /*
+     * ============================================================
+     * Profile reports
+     * ============================================================
+     */
+
+    std::cout
+        << "\n========================================\n"
+        << "FULL-SEQUENCE PROFILE\n"
+        << "========================================\n";
+
+    full_profiler.printReport();
+
+    std::cout
+        << "\n========================================\n"
+        << "NEXT-TOKEN PROFILE\n"
+        << "========================================\n";
+
+    next_token_profiler.printReport();
+
     return 0;
 }

@@ -5,8 +5,8 @@
 namespace transformer {
 
 Linear::Linear(
-    size_t input_features,
-    size_t output_features,
+    size_t input_features, // 256
+    size_t output_features, // 10,000
     bool use_bias
 )
     : input_features_(input_features),

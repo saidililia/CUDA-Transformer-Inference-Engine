@@ -24,6 +24,10 @@ namespace transformer
             const Tensor &token_ids,
             Profiler *profiler = nullptr) const;
 
+        Tensor forwardNextToken(
+            const Tensor &token_ids,
+            Profiler *profiler = nullptr) const; // forward pass for next token prediction only (not the whole sequence as an input)
+
     private:
         TransformerConfig config_;
 
