@@ -52,12 +52,10 @@ The current measured CPU baseline is:
 
 ## 4. CPU Inference Optimization — LM Head
 
-The optimized path still processes the complete input sequence through the embedding layer, decoder blocks, and final layer normalization.
+The optimized path still processes the complete input sequence through the embedding layer, decoder blocks, and final layer normalization. It then extracts only the hidden state corresponding to the final token and passes that single hidden state through the language-model head.
 
-It then extracts only the hidden state corresponding to the final token and passes that single hidden state through the language-model head.
-
-Results
-Full-Sequence Inference
+### Results
+#### Full-Sequence Inference
 
 Transformer::forward() produces:
 
@@ -65,7 +63,7 @@ Output shape: [32, 10000]
 Average latency: 191.415 ms
 Throughput: 167.176 tokens/s
 
-Next-Token Inference
+#### Next-Token Inference
 
 Transformer::forwardNextToken() produces:
 
@@ -73,7 +71,7 @@ Output shape: [1, 10000]
 Average latency: 76.7318 ms
 Next-token predictions/s: 13.0324
 
-Performance Comparison
+### Performance Comparison
 Metric	forward()	forwardNextToken()
 Output shape	[32, 10000]	[1, 10000]
 Average latency	191.415 ms	76.7318 ms
