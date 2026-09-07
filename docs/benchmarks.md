@@ -69,29 +69,28 @@ Transformer::forward() produces:
 
 Transformer::forwardNextToken() produces:
 
-Output shape: [1, 10000]
-Average latency: 76.7318 ms
-Next-token predictions/s: 13.0324
+| Parameter | Value |
+|---|---:|
+| Output shape | [1, 10000] |
+| Average latency | 76.7318 ms |
+| Throughput | 13.0324 |
 
 ### Performance Comparison
-Metric	forward()	forwardNextToken()
-Output shape	[32, 10000]	[1, 10000]
-Average latency	191.415 ms	76.7318 ms
-Relative latency	100%	40.1%
-Speedup	1.00×	2.49×
+
+| Metric | forward() | forwardNextToken() |
+|---|---|---:|
+| Output shape | [32, 10000] | [1, 10000] |
+| Average latency | 191.415 ms | 76.7318 ms |
+| Relative latency | 100% | 40.1% |
+| Speedup | 1.00× | 2.49× |
 
 The optimized path reduced end-to-end latency by approximately 59.9%, while achieving a 2.49× speedup.
 
-LM Head Work Reduction
+## LM Head Work Reduction
 
-The original language-model head performs a matrix multiplication equivalent to:
+The original language-model head performs a matrix multiplication equivalent to: [32, 256] × [256, 10000]
 
-[32, 256] × [256, 10000]
-
-
-For next-token inference, the optimized path performs:
-
-[1, 256] × [256, 10000]
+For next-token inference, the optimized path performs: [1, 256] × [256, 10000]
 
 
 Therefore, the number of output rows processed by the LM Head is reduced by a factor of 32.
