@@ -49,7 +49,8 @@ The measured component times closely account for the total end-to-end inference 
 
 ### Key Observation
 
-The first profiling experiment demonstrated an important performance-engineering principle: **Performance bottlenecks should be measured rather than assumed**.
+The first profiling experiment demonstrated an important performance-engineering principle:
+ **Performance bottlenecks should be measured rather than assumed**.
 
 Although transformer attention is commonly considered computationally expensive, the measured bottleneck for the current model configuration is the final vocabulary projection.
 
@@ -63,23 +64,21 @@ The next profiling and analysis step will examine the CPU implementation of the:
 LM Head
 ```
 
-### Experiment 2 — LM Head Optimization
+## Experiment 2 — LM Head Optimization
 
-The initial CPU profile was collected using a sequence length of 32 and 10 measured iterations.
+The initial CPU profile was collected using a sequence length of 32 and 10 measured iterations. The original implementation projected the hidden state of every sequence position through the vocabulary projection:
 
-The original implementation projected the hidden state of every sequence position through the vocabulary projection:
-
+```text
 [32, 256]
      ↓
   LM Head
      ↓
 [32, 10000]
+```
 
+For next-token prediction, only the final position is required. The computation was therefore changed to:
 
-For next-token prediction, only the final position is required.
-
-The computation was therefore changed to:
-
+```text
 [32, 256]
      ↓
 extract final hidden state
@@ -89,36 +88,25 @@ extract final hidden state
   LM Head
      ↓
 [1, 10000]
+```
 
-Post-Optimization Profile
-Operation	Total (ms)	Calls	Average (ms)
-DecoderBlock 0	364.958	10	36.496
-DecoderBlock 1	364.685	10	36.469
-Embedding	0.128	10	0.013
-Extract Last Hidden State	0.008	10	0.001
-Final LayerNorm	0.342	10	0.034
-LM Head	37.170	10	3.717
-Before vs. After
-LM Head Latency
-Metric	Before	After
-Latency	117.135 ms	3.717 ms
-Reduction	—	≈31.5×
+### Post-Optimization Profile
+| Operation | Total Time | Calls | Average Time |
+|---|---|---|---:|
+| Embedding | 0.128 ms | 10 | 0.013 ms |
+| DecoderBlock 0 | 364.958 ms | 10 | 36.496 ms |
+| DecoderBlock 1 | 364.685 ms | 10 | 36.469 ms |
+| Extract Last Hidden State | 0.008 | 10 | 0.001 |
+| Final LayerNorm | 0.342 ms | 10 | 0.034 ms |
+| LM Head | 37.170 ms | 10 | 3.717 ms | 
 
-The LM Head latency decreased from 117.135 ms to 3.717 ms, representing an approximately 31.5× reduction.
 
-Decoder Block Latency
-Operation	Before	After
-DecoderBlock 0	37.257 ms	36.496 ms
-DecoderBlock 1	36.915 ms	36.469 ms
+- The LM Head latency decreased from 117.135 ms to 3.717 ms, representing an approximately 31.5× reduction.
+- The decoder block timings remain approximately unchanged.
+- The extraction of the final hidden state adds only approximately 0.001 ms per call and is therefore negligible relative to the transformer computation.
 
-The decoder block timings remain approximately unchanged.
+### Bottleneck Shift
 
-The extraction of the final hidden state adds only approximately 0.001 ms per call and is therefore negligible relative to the transformer computation.
-
-Bottleneck Shift
-
-Before the optimization, the LM Head was the dominant runtime component.
-
-After the optimization, the decoder blocks become the dominant components.
-
-The next profiling target is therefore the internal operations of DecoderBlock.
+- Before the optimization, the LM Head was the dominant runtime component.
+- After the optimization, the decoder blocks become the dominant components.
+- The next profiling target is therefore the internal operations of DecoderBlock.
