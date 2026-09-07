@@ -59,9 +59,11 @@ The optimized path still processes the complete input sequence through the embed
 
 Transformer::forward() produces:
 
-Output shape: [32, 10000]
-Average latency: 191.415 ms
-Throughput: 167.176 tokens/s
+| Parameter | Value |
+|---|---:|
+| Output shape | [32, 10000] |
+| Average latency | 191.415 ms |
+| Throughput | 167.176 tokens/s |
 
 #### Next-Token Inference
 
