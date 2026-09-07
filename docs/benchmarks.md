@@ -88,14 +88,13 @@ The optimized path reduced end-to-end latency by approximately 59.9%, while achi
 
 ## LM Head Work Reduction
 
-The original language-model head performs a matrix multiplication equivalent to: [32, 256] × [256, 10000]
+- The original language-model head performs a matrix multiplication equivalent to: [32, 256] × [256, 10000]
 
-For next-token inference, the optimized path performs: [1, 256] × [256, 10000]
-
+- For next-token inference, the optimized path performs: [1, 256] × [256, 10000]
 
 Therefore, the number of output rows processed by the LM Head is reduced by a factor of 32.
 
-The measured LM Head latency confirms this reduction:
+- The measured LM Head latency confirms this reduction:
 
 Full forward:       117.135 ms
 Next-token path:      3.717 ms
@@ -103,4 +102,4 @@ Next-token path:      3.717 ms
 
 This corresponds to approximately a 31.5× reduction in LM Head latency.
 
-The end-to-end speedup is smaller because the embedding, decoder blocks, and final layer normalization are still executed for the complete sequence.
+- The end-to-end speedup is smaller because the embedding, decoder blocks, and final layer normalization are still executed for the complete sequence.
