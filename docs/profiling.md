@@ -1,4 +1,4 @@
-Profiling
+# Profiling
 
 This document records profiling experiments, performance measurements, bottleneck analysis, and optimization observations for the CPU and CUDA implementations of the transformer inference engine.
 
@@ -8,8 +8,8 @@ Measure → Identify bottlenecks → Form hypotheses → Optimize → Benchmark 
 
 The CPU implementation serves as the correctness reference and performance baseline before GPU acceleration is introduced.
 
-Experiment 1 — High-Level CPU Profiling
-Objective
+## Experiment 1 — High-Level CPU Profiling
+### Objective
 
 The first profiling experiment measured the execution time of the major stages of the transformer forward pass.
 
@@ -28,7 +28,8 @@ Transformer::forward()
 
 Profiling measurements were collected across 10 inference iterations following an initial warm-up phase.
 
-Results
+### Results
+
 Operation	Total Time	Calls	Average Time
 Embedding	0.222 ms	10	0.022 ms
 DecoderBlock 0	370.872 ms	10	37.087 ms
@@ -38,7 +39,7 @@ LM Head	1168.798 ms	10	116.880 ms
 
 The measured component times closely account for the total end-to-end inference latency.
 
-Performance Analysis
+### Performance Analysis
 
 The profiling experiment identified the LM Head as the dominant CPU bottleneck.
 
@@ -67,13 +68,13 @@ Although transformer attention is commonly considered computationally expensive,
 
 The profiling results therefore guide the next stage of investigation toward the implementation and computational behavior of the Linear layer used by the LM Head.
 
-Next Investigation
+### Next Investigation
 
 The next profiling and analysis step will examine the CPU implementation of the:
 
 LM Head
 
-Experiment 2 — LM Head Optimization
+### Experiment 2 — LM Head Optimization
 
 The initial CPU profile was collected using a sequence length of 32 and 10 measured iterations.
 
