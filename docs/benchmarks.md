@@ -38,6 +38,7 @@ The current measured CPU baseline is:
 
 ### CPU Transformer Benchmark
 
+|---|---:|
 | Layers | 2 |
 | Hidden size | 256 |
 | Attention heads | 4 |
