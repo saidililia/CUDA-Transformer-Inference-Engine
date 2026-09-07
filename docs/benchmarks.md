@@ -73,7 +73,7 @@ Transformer::forwardNextToken() produces:
 |---|---:|
 | Output shape | [1, 10000] |
 | Average latency | 76.7318 ms |
-| Throughput | 13.0324 |
+| Next token inference | 13.0324 |
 
 ### Performance Comparison
 
