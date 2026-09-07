@@ -17,32 +17,34 @@ This document describes how performance is measured in the CUDA Transformer Infe
 
 The current benchmark uses:
 
-Parameter	Value
-Architecture	Decoder-only Transformer
-Layers	2
-Hidden size	256
-Attention heads	4
-Head dimension	64
-FFN intermediate size	1024
-Vocabulary size	10,000
-Sequence length	32
-Data type	FP32
-Iterations	10
+| Parameter | Value |
+|---|---:|
+| Architecture | Decoder-only Transformer |
+| Layers | 2 |
+| Hidden size | 256 |
+| Attention heads | 4 |
+| Head dimension | 64 |
+| FFN intermediate size | 1024 |
+| Vocabulary size | 10,000 |
+| Sequence length | 32 |
+| Data type | FP32 |
+| Iterations | 10 |
 
+---
 
 ## 3. Current CPU Baseline
 
 The current measured CPU baseline is:
 
-CPU Transformer Benchmark
-==========================
-Layers: 2
-Hidden size: 256
-Attention heads: 4
-Sequence length: 32
-Iterations: 10
-Average latency: 193.785 ms
-Throughput: 165.132 tokens/s
+### CPU Transformer Benchmark
+
+| Layers | 2 |
+| Hidden size | 256 |
+| Attention heads | 4 |
+| Sequence length | 32 |
+| Iterations | 10 |
+| Average latency | 193.785 ms |
+| Throughput | 165.132 tokens/s |
 
 ## 4. CPU Inference Optimization — LM Head
 
