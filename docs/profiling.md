@@ -17,6 +17,7 @@ The goal was to identify where the CPU implementation spends most of its executi
 
 The following components were measured:
 
+```text
 Transformer::forward()
 │
 ├── Embedding
@@ -24,7 +25,7 @@ Transformer::forward()
 ├── DecoderBlock 1
 ├── Final LayerNorm
 └── LM Head
-
+```
 
 Profiling measurements were collected across 10 inference iterations following an initial warm-up phase.
 
