@@ -30,40 +30,26 @@ Transformer::forward()
 Profiling measurements were collected across 10 inference iterations following an initial warm-up phase.
 
 ### Results
-
-Operation	Total Time	Calls	Average Time
-Embedding	0.222 ms	10	0.022 ms
-DecoderBlock 0	370.872 ms	10	37.087 ms
-DecoderBlock 1	363.737 ms	10	36.374 ms
-Final LayerNorm	0.416 ms	10	0.042 ms
-LM Head	1168.798 ms	10	116.880 ms
+| Operation | Total Time | Calls | Average Time |
+|---|---|---|---:|
+| Embedding | 0.222 ms | 10 | 0.022 ms |
+| DecoderBlock 0 | 370.872 ms | 10 | 37.087 ms |
+| DecoderBlock 1 | 363.737 ms | 10 | 36.374 ms |
+| Final LayerNorm | 0.416 ms | 10 | 0.042 ms |
+| LM Head | 1168.798 ms | 10 | 116.880 ms |
 
 The measured component times closely account for the total end-to-end inference latency.
 
 ### Performance Analysis
 
-The profiling experiment identified the LM Head as the dominant CPU bottleneck.
+- The profiling experiment identified the LM Head as the dominant CPU bottleneck.
+- The average execution time of the LM Head was 116.880 ms compared with DecoderBlock 0 with 37.087 ms and DecoderBlock 1 with 36.374 ms.
+- The LM Head alone consumes approximately 61% of the measured end-to-end inference latency for the current benchmark configuration.
+- The two decoder blocks combined consume approximately 39% of the total latency, while embedding and final layer normalization contribute a negligible amount.
 
-The average execution time of the LM Head was:
+### Key Observation
 
-116.880 ms
-
-
-Compared with:
-
-DecoderBlock 0: 37.087 ms
-DecoderBlock 1: 36.374 ms
-
-
-The LM Head alone consumes approximately 61% of the measured end-to-end inference latency for the current benchmark configuration.
-
-The two decoder blocks combined consume approximately 39% of the total latency, while embedding and final layer normalization contribute a negligible amount.
-
-Key Observation
-
-The first profiling experiment demonstrated an important performance-engineering principle:
-
-Performance bottlenecks should be measured rather than assumed.
+The first profiling experiment demonstrated an important performance-engineering principle: **Performance bottlenecks should be measured rather than assumed**.
 
 Although transformer attention is commonly considered computationally expensive, the measured bottleneck for the current model configuration is the final vocabulary projection.
 
@@ -73,7 +59,9 @@ The profiling results therefore guide the next stage of investigation toward the
 
 The next profiling and analysis step will examine the CPU implementation of the:
 
+```text
 LM Head
+```
 
 ### Experiment 2 — LM Head Optimization
 
