@@ -47,6 +47,8 @@ The current measured CPU baseline is:
 | Average latency | 193.785 ms |
 | Throughput | 165.132 tokens/s |
 
+---
+
 ## 4. CPU Inference Optimization — LM Head
 
 The optimized path still processes the complete input sequence through the embedding layer, decoder blocks, and final layer normalization.
