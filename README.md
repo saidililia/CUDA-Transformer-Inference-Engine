@@ -105,7 +105,7 @@ Throughput: 165.132 tokens/s
 
 This baseline will be used for comparison with the CUDA implementation.
 
-See [`docs/benchmark.md`](docs/benchmark.md) for the benchmarking methodology and results.
+See [`docs/benchmarks.md`](docs/benchmarks.md) for the benchmarking methodology and results.
 
 ---
 

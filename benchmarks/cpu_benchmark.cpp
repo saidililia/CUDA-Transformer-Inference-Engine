@@ -23,6 +23,7 @@ int main()
 
     Tensor token_ids({sequence_length});
 
+    // this loop initializes the token_ids tensor with a sequence of integers from 0 to sequence_length - 1.
     for (size_t i = 0;
          i < sequence_length;
          ++i)
@@ -34,14 +35,7 @@ int main()
 
     constexpr int iterations = 10;
 
-    /*
-     * ============================================================
-     * Warm-up
-     * ============================================================
-     *
-     * Run both paths before measuring them.
-     */
-
+    // warm up the model by running a few iterations of both forward passes to ensure that any initial setup or caching is done before the actual benchmarking begins.
     for (int i = 0;
          i < 3;
          ++i)
@@ -53,12 +47,8 @@ int main()
     Profiler full_profiler;
     Profiler next_token_profiler;
 
-    /*
-     * ============================================================
-     * Benchmark: model.forward()
-     * ============================================================
-     */
-
+    
+    // Benchmark 1 : model.forward()
     Timer full_timer;
 
     full_timer.start();
@@ -79,12 +69,9 @@ int main()
         full_total_time /
         static_cast<double>(iterations);
 
-    /*
-     * ============================================================
-     * Benchmark: model.forwardNextToken()
-     * ============================================================
-     */
+    
 
+    // Benchmark 2 : model.forwardNextToken()    
     Timer next_token_timer;
 
     next_token_timer.start();
@@ -105,11 +92,9 @@ int main()
         next_token_total_time /
         static_cast<double>(iterations);
 
-    /*
-     * ============================================================
-     * Results
-     * ============================================================
-     */
+    
+
+    // Printing results and comparison of the two benchmarks.
 
     std::cout
         << "\nCPU Transformer Benchmark\n"
@@ -140,10 +125,9 @@ int main()
         << iterations
         << '\n';
 
-    /*
-     * Full forward results.
-     */
+    
 
+    // Result 1 : model.forward()
     std::cout
         << "\n--- model.forward() ---\n";
 
@@ -166,10 +150,8 @@ int main()
             full_average_time)
         << " tokens/s\n";
 
-    /*
-     * Next-token results.
-     */
-
+    
+    // Result 2 : model.forwardNextToken()
     std::cout
         << "\n--- model.forwardNextToken() ---\n";
 
@@ -183,23 +165,16 @@ int main()
         << next_token_average_time
         << " ms\n";
 
-    /*
-     * Only one token is actually projected by
-     * forwardNextToken().
-     */
 
+    // Only one token is actually projected by forwardNextToken().
     std::cout
         << "Throughput: "
         << (1000.0 /
             next_token_average_time)
         << " tokens/s\n";
 
-    /*
-     * ============================================================
-     * Comparison
-     * ============================================================
-     */
-
+    
+    // Comparison of the two benchmarks.
     const double speedup =
         full_average_time /
         next_token_average_time;
@@ -212,12 +187,8 @@ int main()
         << speedup
         << "x\n";
 
-    /*
-     * ============================================================
-     * Profile reports
-     * ============================================================
-     */
 
+    // Print profiling reports for both benchmarks.
     std::cout
         << "\n========================================\n"
         << "FULL-SEQUENCE PROFILE\n"

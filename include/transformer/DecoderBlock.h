@@ -26,4 +26,4 @@ private:
     FeedForward feed_forward_;
 };
 
-} // namespace transformer
+} 
