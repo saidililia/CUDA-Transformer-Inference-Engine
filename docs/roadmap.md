@@ -10,7 +10,7 @@ This roadmap tracks the development of the CUDA Transformer Inference Engine fro
 
 Establish a complete and testable CPU implementation of a small decoder-only Transformer.
 
-## Completed
+## Tasks
 
 - [x] Implement tensor abstraction and basic tensor operations
 - [x] Implement linear layers and token embeddings
