@@ -1,5 +1,3 @@
-
-```markdown
 # Roadmap
 
 This roadmap tracks the development of the CUDA Transformer Inference Engine from the CPU reference implementation to a profiled and optimized CUDA implementation.
