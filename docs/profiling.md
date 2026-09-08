@@ -49,12 +49,9 @@ The measured component times closely account for the total end-to-end inference 
 
 ### Key Observation
 
-The first profiling experiment demonstrated an important performance-engineering principle:
- **Performance bottlenecks should be measured rather than assumed**.
-
-Although transformer attention is commonly considered computationally expensive, the measured bottleneck for the current model configuration is the final vocabulary projection.
-
-The profiling results therefore guide the next stage of investigation toward the implementation and computational behavior of the Linear layer used by the LM Head.
+- The first profiling experiment demonstrated an important performance-engineering principle: **Performance bottlenecks should be measured rather than assumed**.
+- Although transformer attention is commonly considered computationally expensive, the measured bottleneck for the current model configuration is the final vocabulary projection.
+- The profiling results therefore guide the next stage of investigation toward the implementation and computational behavior of the Linear layer used by the LM Head.
 
 ### Next Investigation
 
@@ -110,3 +107,132 @@ extract final hidden state
 - Before the optimization, the LM Head was the dominant runtime component.
 - After the optimization, the decoder blocks become the dominant components.
 - The next profiling target is therefore the internal operations of DecoderBlock.
+
+## Experiment 3 — DecoderBlock Profiling
+
+### Objective
+
+Following the optimization of the LM Head, the decoder blocks became the dominant component of next-token inference.
+
+The objective of this experiment was therefore to decompose the execution time of each `DecoderBlock` and determine whether the dominant cost originates from the attention mechanism, feed-forward network, or supporting operations such as LayerNorm and residual connections.
+
+The profiled structure was:
+
+```text
+DecoderBlock
+
+├── Attention LayerNorm
+├── Attention
+├── Residual 1
+├── FeedForward LayerNorm
+├── FeedForward
+└── Residual 2
+```
+
+Profiling was performed during next-token inference using a sequence length of 32 across 10 measured iterations following an initial warm-up phase.
+
+### Results
+
+| Operation                 | Total Time | Calls | Average Time |
+| ------------------------- | ---------: | ----: | -----------: |
+| DecoderBlock 0            | 368.416 ms |    10 |    36.842 ms |
+| ├── Attention             | 128.411 ms |    10 |    12.841 ms |
+| ├── Attention LayerNorm   |   0.339 ms |    10 |     0.034 ms |
+| ├── FeedForward           | 238.731 ms |    10 |    23.873 ms |
+| ├── FeedForward LayerNorm |   0.376 ms |    10 |     0.038 ms |
+| ├── Residual 1            |   0.138 ms |    10 |     0.014 ms |
+| └── Residual 2            |   0.143 ms |    10 |     0.014 ms |
+| DecoderBlock 1            | 367.778 ms |    10 |    36.778 ms |
+| ├── Attention             | 128.456 ms |    10 |    12.846 ms |
+| ├── Attention LayerNorm   |   0.375 ms |    10 |     0.038 ms |
+| ├── FeedForward           | 237.976 ms |    10 |    23.798 ms |
+| ├── FeedForward LayerNorm |   0.346 ms |    10 |     0.035 ms |
+| ├── Residual 1            |   0.136 ms |    10 |     0.014 ms |
+| └── Residual 2            |   0.241 ms |    10 |     0.024 ms |
+| Embedding                 |   0.136 ms |    10 |     0.014 ms |
+| Extract Last Hidden State |   0.010 ms |    10 |     0.001 ms |
+| Final LayerNorm           |   0.429 ms |    10 |     0.043 ms |
+| LM Head                   |  36.596 ms |    10 |     3.660 ms |
+
+### Performance Analysis
+
+The profiling results show that the two decoder blocks have nearly identical execution times, with average latencies of approximately 36.8 ms each.
+
+Within each decoder block, the FeedForward network is the dominant operation:
+
+* FeedForward: approximately **23.8 ms per block**. accounting for approximately 65% of the execution time of each decoder block.
+* Attention: approximately **12.8 ms per block**. accounting for approximately 35% of the execution time of each decoder block.
+* LayerNorm and residual operations: less than **0.1 ms per operation**
+
+The results indicate that the dominant computational workload is not the supporting tensor operations but the arithmetic performed inside the FeedForward network.
+
+### Bottleneck Identification
+
+The FeedForward network consists primarily of two Linear transformations separated by a GELU activation:
+
+```text
+Input [32, 256]
+
+      ↓
+
+Linear
+[32, 256] × [256, 1024]
+
+      ↓
+
+GELU
+
+      ↓
+
+Linear
+[32, 1024] × [1024, 256]
+
+      ↓
+
+Output [32, 256]
+```
+
+The Linear transformations perform matrix multiplication and therefore account for the majority of the arithmetic work within the FeedForward network. This makes the Linear layer the natural target for lower-level parallel optimization.
+
+### Key Observation
+
+- This experiment confirms that the bottleneck has shifted from the LM Head to the decoder blocks following the next-token optimization.
+- Within the decoder blocks, the FeedForward network is the dominant component, and its computational workload is primarily composed of matrix multiplications.
+
+The profiling hierarchy therefore establishes the following bottleneck:
+
+```text
+Transformer
+    ↓
+Decoder Blocks
+    ↓
+FeedForward
+    ↓
+Linear transformations
+    ↓
+Matrix multiplication
+```
+
+The supporting operations, including LayerNorm, residual connections, and GELU, contribute comparatively little to the measured runtime.
+
+### Next Investigation
+
+The next stage will implement and validate a CUDA-based Linear operation.
+
+The process will follow:
+
+```text
+CPU Linear
+    ↓
+CUDA Linear
+    ↓
+Numerical correctness validation
+    ↓
+CPU vs GPU benchmark
+    ↓
+GPU profiling
+    ↓
+CUDA optimization
+```
+
+The initial CUDA implementation will prioritize correctness and a clear CPU-to-GPU performance comparison before introducing more advanced optimizations.

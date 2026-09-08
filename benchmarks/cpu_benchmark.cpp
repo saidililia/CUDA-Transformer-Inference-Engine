@@ -6,8 +6,145 @@
 
 using namespace transformer;
 
+
+//Benchmark result structure: Stores the results of a benchmark so that main() can later compare different inference paths.
+struct BenchmarkResult {
+
+    double total_time;
+    double average_time;
+};
+
+
+// Benchmark 1: Full-sequence inference
+BenchmarkResult benchmarkFullSequence(
+    Transformer& model,
+    const Tensor& token_ids,
+    int iterations
+) {
+
+    // Warm-up: Run a few iterations of the model to ensure that any initial setup costs (like memory allocation) do not affect the benchmark results.
+    for (int i = 0;
+         i < 3;
+         ++i) {
+
+        model.forward(token_ids);
+    }
+
+
+    Timer timer;
+
+    timer.start();
+
+    for (int i = 0;
+         i < iterations;
+         ++i) {
+
+        model.forward(token_ids);
+    }
+
+    const double total_time =
+        timer.stopMilliseconds();
+
+    const double average_time =
+        total_time /
+        static_cast<double>(iterations);
+
+
+    return {
+        total_time,
+        average_time
+    };
+}
+
+
+// Benchmark 2: Next-token inference
+BenchmarkResult benchmarkNextToken(
+    Transformer& model,
+    const Tensor& token_ids,
+    int iterations
+) {
+
+    // Warm-up
+    for (int i = 0;
+         i < 3;
+         ++i) {
+
+        model.forwardNextToken(token_ids);
+    }
+
+
+    Timer timer;
+
+    timer.start();
+
+    for (int i = 0;
+         i < iterations;
+         ++i) {
+
+        model.forwardNextToken(token_ids);
+    }
+
+    const double total_time =
+        timer.stopMilliseconds();
+
+    const double average_time =
+        total_time /
+        static_cast<double>(iterations);
+
+
+    return {
+        total_time,
+        average_time
+    };
+}
+
+
+// Profile 3: Decoder blocks during next-token inference
+void profileDecoderBlocksNextToken(
+    Transformer& model,
+    const Tensor& token_ids,
+    int iterations
+) {
+
+    // warm up
+    for (int i = 0;
+         i < 3;
+         ++i) {
+
+        model.forwardNextToken(token_ids);
+    }
+
+
+    Profiler profiler;
+
+
+    // Run next-token inference while collecting profiling data.
+    for (int i = 0;
+         i < iterations;
+         ++i) {
+
+        model.forwardNextToken(
+            token_ids,
+            &profiler
+        );
+    }
+
+
+    // Print the profiling report.
+    std::cout
+        << "\n========================================\n"
+        << "DECODER BLOCK PROFILE\n"
+        << "========================================\n";
+
+    profiler.printReport();
+}
+
+
 int main()
 {
+
+    // Transformer configuration.
+
     TransformerConfig config;
 
     config.vocabulary_size = 10000;
@@ -21,81 +158,42 @@ int main()
 
     const size_t sequence_length = 32;
 
-    Tensor token_ids({sequence_length});
+    Tensor token_ids({
+        sequence_length
+    });
 
-    // this loop initializes the token_ids tensor with a sequence of integers from 0 to sequence_length - 1.
     for (size_t i = 0;
          i < sequence_length;
-         ++i)
-    {
+         ++i) {
+
         token_ids[i] =
             static_cast<float>(
-                i % config.vocabulary_size);
+                i % config.vocabulary_size
+            );
     }
+
 
     constexpr int iterations = 10;
 
-    // warm up the model by running a few iterations of both forward passes to ensure that any initial setup or caching is done before the actual benchmarking begins.
-    for (int i = 0;
-         i < 3;
-         ++i)
-    {
-        model.forward(token_ids);
-        model.forwardNextToken(token_ids);
-    }
 
-    Profiler full_profiler;
-    Profiler next_token_profiler;
+    // Select experiments
 
-    
-    // Benchmark 1 : model.forward()
-    Timer full_timer;
-
-    full_timer.start();
-
-    for (int i = 0;
-         i < iterations;
-         ++i)
-    {
-        model.forward(
+    const BenchmarkResult full_result =
+        benchmarkFullSequence(
+            model,
             token_ids,
-            &full_profiler);
-    }
+            iterations
+        );
 
-    const double full_total_time =
-        full_timer.stopMilliseconds();
-
-    const double full_average_time =
-        full_total_time /
-        static_cast<double>(iterations);
-
-    
-
-    // Benchmark 2 : model.forwardNextToken()    
-    Timer next_token_timer;
-
-    next_token_timer.start();
-
-    for (int i = 0;
-         i < iterations;
-         ++i)
-    {
-        model.forwardNextToken(
+    const BenchmarkResult next_token_result =
+        benchmarkNextToken(
+            model,
             token_ids,
-            &next_token_profiler);
-    }
+            iterations
+        );
 
-    const double next_token_total_time =
-        next_token_timer.stopMilliseconds();
 
-    const double next_token_average_time =
-        next_token_total_time /
-        static_cast<double>(iterations);
-
-    
-
-    // Printing results and comparison of the two benchmarks.
-
+    // Print benchmark results
     std::cout
         << "\nCPU Transformer Benchmark\n"
         << "==========================\n";
@@ -125,9 +223,8 @@ int main()
         << iterations
         << '\n';
 
-    
 
-    // Result 1 : model.forward()
+    // Full-sequence results.
     std::cout
         << "\n--- model.forward() ---\n";
 
@@ -140,18 +237,20 @@ int main()
 
     std::cout
         << "Average latency: "
-        << full_average_time
+        << full_result.average_time
         << " ms\n";
 
     std::cout
         << "Throughput: "
-        << (1000.0 *
+        << (
+            1000.0 *
             sequence_length /
-            full_average_time)
+            full_result.average_time
+        )
         << " tokens/s\n";
 
-    
-    // Result 2 : model.forwardNextToken()
+
+    // Next-token results.
     std::cout
         << "\n--- model.forwardNextToken() ---\n";
 
@@ -162,22 +261,22 @@ int main()
 
     std::cout
         << "Average latency: "
-        << next_token_average_time
+        << next_token_result.average_time
         << " ms\n";
 
-
-    // Only one token is actually projected by forwardNextToken().
     std::cout
-        << "Throughput: "
-        << (1000.0 /
-            next_token_average_time)
+        << "Generation throughput: "
+        << (
+            1000.0 /
+            next_token_result.average_time
+        )
         << " tokens/s\n";
 
-    
-    // Comparison of the two benchmarks.
+
+    // Comparison.
     const double speedup =
-        full_average_time /
-        next_token_average_time;
+        full_result.average_time /
+        next_token_result.average_time;
 
     std::cout
         << "\n--- Comparison ---\n";
@@ -188,20 +287,13 @@ int main()
         << "x\n";
 
 
-    // Print profiling reports for both benchmarks.
-    std::cout
-        << "\n========================================\n"
-        << "FULL-SEQUENCE PROFILE\n"
-        << "========================================\n";
+    // Decoder block profiling
+    profileDecoderBlocksNextToken(
+        model,
+        token_ids,
+        iterations
+    );
 
-    full_profiler.printReport();
-
-    std::cout
-        << "\n========================================\n"
-        << "NEXT-TOKEN PROFILE\n"
-        << "========================================\n";
-
-    next_token_profiler.printReport();
 
     return 0;
 }

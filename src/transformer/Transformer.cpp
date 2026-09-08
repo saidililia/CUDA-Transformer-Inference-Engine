@@ -70,7 +70,7 @@ namespace transformer
                 profiler->start(name);
             }
 
-            x = layers_[i].forward(x);
+            x = layers_[i].forward( x, profiler, i);
 
             if (profiler)
             {
@@ -155,7 +155,7 @@ namespace transformer
             }
 
             x =
-                layers_[i].forward(x);
+                layers_[i].forward(x, profiler, i);
 
             if (profiler)
             {

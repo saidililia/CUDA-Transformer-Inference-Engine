@@ -7,23 +7,28 @@
 #include "layers/LayerNorm.h"
 #include "tensor/Tensor.h"
 #include "transformer/TransformerConfig.h"
+#include "utils/Profiler.h"
 
-namespace transformer {
+namespace transformer
+{
 
-class DecoderBlock {
-public:
-    explicit DecoderBlock(
-        const TransformerConfig& config
-    );
+    class DecoderBlock
+    {
+    public:
+        explicit DecoderBlock(
+            const TransformerConfig &config);
 
-    Tensor forward(const Tensor& input) const;
+        Tensor forward(
+            const Tensor &input,
+            Profiler *profiler = nullptr,
+            size_t block_index = 0) const;
 
-private:
-    LayerNorm attention_norm_;
-    Attention attention_;
+    private:
+        LayerNorm attention_norm_;
+        Attention attention_;
 
-    LayerNorm feed_forward_norm_;
-    FeedForward feed_forward_;
-};
+        LayerNorm feed_forward_norm_;
+        FeedForward feed_forward_;
+    };
 
-} 
+}

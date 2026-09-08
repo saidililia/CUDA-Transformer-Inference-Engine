@@ -40,27 +40,27 @@ Throughput: 165.132 tokens/s
 
 # Phase 2 — CPU Profiling
 
-**Status: Planned**
+**Status: Complete**
 
-Profile the CPU reference implementation to identify compute-intensive operations and establish operation-level baselines before CUDA implementation.
+Profile the CPU reference implementation to establish performance baselines, identify computational bottlenecks, and determine the most appropriate targets for GPU acceleration.
 
 
 ## Tasks
 
-- [ ] Add operation-level timing
-- [ ] Measure embedding, LayerNorm, Q/K/V projections, and RoPE
-- [ ] Measure QKᵀ, Softmax, and attention × V
-- [ ] Measure output projection and FFN
-- [ ] Measure final LayerNorm and LM head
-- [ ] Analyze performance across sequence lengths
-- [ ] Record profiling results in `docs/profiling.md`
-- [ ] Update `docs/benchmark.md`
+- [x] Add layer-level timing
+- [x] Profile the major stages of the Transformer forward pass
+- [x] Establish baseline latency for full-sequence inference
+- [x] Establish baseline latency for next-token inference
+- [x] Profile DecoderBlock execution
+- [x] Identify Linear transformations / matrix multiplication as the primary computational target
+- [x] Record profiling results in `docs/profiling.md`
+- [x] Update `docs/benchmark.md`
 
 ---
 
 # Phase 3 — CUDA Implementation
 
-**Status: Planned**
+**Status: In Progress**
 
 Introduce CUDA execution and progressively move compute-intensive Transformer operations to the GPU.
 

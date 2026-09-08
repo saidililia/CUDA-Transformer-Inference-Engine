@@ -69,3 +69,36 @@ Output Logits
     │
     ▼
 Predicted Token
+
+```
+---
+
+### Attention sub-layers
+
+```text
+
+Attention
+    │
+    ├── Q projection
+    ├── K projection
+    ├── V projection
+    ├── QKᵀ
+    ├── Softmax
+    ├── Attention × V
+    └── Output projection
+
+```
+
+---
+
+### FeedForward sub-layers
+
+```text
+
+FeedForward
+    │
+    ├── Linear 1
+    ├── GELU
+    └── Linear 2
+
+```

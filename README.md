@@ -115,10 +115,15 @@ See [`docs/benchmarks.md`](docs/benchmarks.md) for the benchmarking methodology 
 .
 ├── include/
 │   ├── layers/
+│   ├── tensor/
+│   ├── transformer/
 │   └── utils/
 │
 ├── src/
+│   ├── cpu/
 │   ├── layers/
+│   ├── tensor/
+│   ├── transformer/
 │   └── utils/
 │
 ├── tests/
