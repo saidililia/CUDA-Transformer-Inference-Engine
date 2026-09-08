@@ -24,16 +24,6 @@ Establish a complete and testable CPU implementation of a small decoder-only Tra
 - [x] Establish CPU benchmark and baseline
 
 
-## Current baseline
-
-Layers: 2
-Hidden size: 256
-Attention heads: 4
-Sequence length: 32
-Iterations: 10
-Average latency: 193.785 ms
-Throughput: 165.132 tokens/s
-
 ---
 
 # Phase 2 — CPU Profiling
